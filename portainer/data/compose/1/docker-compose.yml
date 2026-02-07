@@ -1,0 +1,8 @@
+services:
+  cloudflare-ddns:
+    image: oznu/cloudflare-ddns:latest
+    restart: always
+    environment:
+      API_KEY: ${CF_API_TOKEN}
+      ZONE: ${CF_ZONE}
+      PROXIED: "false"

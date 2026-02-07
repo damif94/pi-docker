@@ -1,0 +1,13 @@
+# Ignore everything by default
+*
+
+# But keep directories so git can traverse them
+!*/
+
+# Keep docker-compose files anywhere
+!**/docker-compose.yml
+!**/docker-compose.yaml
+
+# (optional) also keep a root README / gitignore itself
+!.gitignore
+!README.md
