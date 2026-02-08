@@ -444,6 +444,7 @@ Paste this:
 
 BACKUP_DIR="/home/damian/backups"
 N8N_DIR="/home/damian/docker/n8n"
+ENV_FILE="/home/damian/docker/.env"
 DATE=$(date +%Y%m%d-%H%M%S)
 BACKUP_FILE="$BACKUP_DIR/n8n-backup-$DATE.tar.gz"
 
@@ -457,7 +458,8 @@ docker-compose down
 # Create backup
 sudo tar -czf $BACKUP_FILE data/ postgres/
 
-# Restart n8n
+# Export environment variables and restart n8n
+export $(cat $ENV_FILE | grep -v '^#' | xargs)
 docker-compose up -d
 
 # Keep only last 7 backups
@@ -557,6 +559,18 @@ docker-compose logs n8n
    sudo netstat -tulpn | grep 5678
    ```
 
+4. **Permission denied error**:
+   ```
+   Error: EACCES: permission denied, open '/home/node/.n8n/config'
+   ```
+   Fix: The data directory needs correct permissions:
+   ```bash
+   cd /home/damian/docker/n8n
+   sudo chown -R 1000:1000 data
+   export $(cat /home/damian/docker/.env | grep -v '^#' | xargs)
+   docker-compose restart
+   ```
+
 ### Problem: Workflows execute slowly
 
 **Check resources**:
@@ -654,7 +668,7 @@ Edit `docker-compose.yml` on your **workstation**:
 Then redeploy:
 ```bash
 rsync -avz /Users/damianferencz/GolandProjects/pi-docker/n8n/ damian@damianferencz.org:/home/damian/docker/n8n/
-ssh damian@damianferencz.org "cd /home/damian/docker/n8n && docker-compose down && docker-compose up -d"
+ssh damian@damianferencz.org "cd /home/damian/docker/n8n && export \$(cat /home/damian/docker/.env | grep -v '^#' | xargs) && docker-compose down && docker-compose up -d"
 ```
 
 ### Use SSD Instead of MicroSD
@@ -687,6 +701,7 @@ Update monthly:
 ```bash
 ssh damian@damianferencz.org
 cd /home/damian/docker/n8n
+export $(cat /home/damian/docker/.env | grep -v '^#' | xargs)
 docker-compose pull
 docker-compose down
 docker-compose up -d
@@ -745,6 +760,12 @@ ssh damian@damianferencz.org
 cd /home/damian/docker/n8n
 ```
 
+### Export Environment Variables
+**Important**: Always export environment variables before running `docker-compose up`:
+```bash
+export $(cat /home/damian/docker/.env | grep -v '^#' | xargs)
+```
+
 ### View Logs
 ```bash
 docker-compose logs -f
@@ -757,7 +778,7 @@ docker-compose restart
 
 ### Update n8n
 ```bash
-docker-compose pull && docker-compose down && docker-compose up -d
+export $(cat /home/damian/docker/.env | grep -v '^#' | xargs) && docker-compose pull && docker-compose down && docker-compose up -d
 ```
 
 ### Access n8n

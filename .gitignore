@@ -69,7 +69,7 @@ tdarr/server/
 
 .ralph/
 PROMPT.md
-.claude/
+#.claude/
 
 # ------------------------------
 # Git-crypt
