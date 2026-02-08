@@ -1,30 +1,74 @@
-# Ignore everything by default
-*
+cat > .gitignore <<'EOF'
+# ------------------------------
+# pi-docker: ignore runtime data
+# ------------------------------
 
-# But keep directories so git can traverse them
-!*/
+# OS/editor junk
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
 
-# Keep docker-compose files anywhere
-!**/docker-compose.yml
-!**/docker-compose.yaml
+# Node/Python caches (just in case)
+node_modules/
+__pycache__/
+*.pyc
 
-# (optional) also keep a root README / gitignore itself
-!.gitignore
-!.gitattributes
-!README.md
-!PROMPT.md
-
-# Keep the root .env file (will be encrypted by git-crypt)
-!/.env
-
-# Keep the .env.example template (plaintext, not encrypted)
+# ------------------------------
+# Secrets / env files
+# ------------------------------
+# Keep templates in git, keep real secrets out (use git-crypt for selected .env if you want)
+.env
+.env.*
 !.env.example
+!.env.sample
+!.env.template
 
-# But ignore local .env overrides (not encrypted)
-.env.local
+# ------------------------------
+# Docker runtime / volume data
+# (never commit these; they cause permission issues and churn)
+# ------------------------------
+**/data/
+**/mysql/
+**/mariadb/
+**/postgres/
+**/redis/
+**/influxdb/
+**/elasticsearch/
+**/mongodb/
+**/minio/
+**/cache/
+**/logs/
+**/log/
+**/tmp/
 
-# Keep documentation in .ralph/agent/
-!.ralph/
-!.ralph/agent/
-!.ralph/agent/*.md
+# Nginx Proxy Manager / certs
+**/letsencrypt/
+**/acme/
+**/certs/
+**/ssl/
+**/nginx/certs/
+**/nginx/mysql/
+**/nginx/letsencrypt/
 
+# Portainer runtime
+portainer/data/
+
+# Tdarr runtime (you mount these)
+tdarr/config/
+tdarr/logs/
+tdarr/server/
+
+# Watchtower / other app state (if you add later)
+**/config/cache/
+**/config/logs/
+
+# ------------------------------
+# Git-crypt
+# ------------------------------
+# IMPORTANT: do NOT ignore .git-crypt (must be committed)
+# .git-crypt/
+EOF
