@@ -11,3 +11,14 @@
 # (optional) also keep a root README / gitignore itself
 !.gitignore
 !README.md
+
+# --- Docker runtime data (never commit) ---
+**/data/
+**/mysql/
+**/letsencrypt/
+**/postgres/
+**/redis/
+**/cache/
+**/logs/
+**/acme/
+**/certs/
