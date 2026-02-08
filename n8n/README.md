@@ -127,9 +127,27 @@ cat /home/damian/docker/.env | grep N8N
 
 You should see your n8n configuration printed.
 
-### Step 5: Start n8n Services
+### Step 5: Prepare Data Directory and Permissions
+
+Before starting n8n, ensure the data directory has correct permissions:
 
 ```bash
+# Create data directory if it doesn't exist
+mkdir -p data
+
+# Fix permissions (n8n runs as UID 1000)
+sudo chown -R 1000:1000 data
+```
+
+### Step 6: Export Environment Variables and Start n8n
+
+Docker Compose needs access to the environment variables from the parent `.env` file:
+
+```bash
+# Export all variables from the .env file
+export $(cat /home/damian/docker/.env | grep -v '^#' | xargs)
+
+# Start n8n services
 docker-compose up -d
 ```
 
@@ -140,7 +158,7 @@ Creating n8n-postgres ... done
 Creating n8n          ... done
 ```
 
-### Step 6: Verify Services Are Running
+### Step 7: Verify Services Are Running
 
 ```bash
 docker-compose ps
@@ -155,7 +173,7 @@ n8n-postgres    postgres:15-alpine      Up (healthy)
 
 Both should show `Up (healthy)` status. If not, wait 30 seconds and check again.
 
-### Step 7: Check Logs
+### Step 8: Check Logs
 
 ```bash
 # View all logs
@@ -172,7 +190,7 @@ n8n ready on 0.0.0.0:5678
 
 Press `Ctrl+C` to exit logs.
 
-### Step 8: Test Local Access
+### Step 9: Test Local Access
 
 From the Pi terminal:
 
@@ -315,6 +333,7 @@ docker-compose down
 ```bash
 ssh damian@damianferencz.org
 cd /home/damian/docker/n8n
+export $(cat /home/damian/docker/.env | grep -v '^#' | xargs)
 docker-compose up -d
 ```
 
@@ -323,6 +342,7 @@ docker-compose up -d
 ```bash
 ssh damian@damianferencz.org
 cd /home/damian/docker/n8n
+export $(cat /home/damian/docker/.env | grep -v '^#' | xargs)
 docker-compose pull
 docker-compose down
 docker-compose up -d
@@ -402,7 +422,8 @@ sudo tar -xzf ~/backups/n8n-backup-YYYYMMDD-HHMMSS.tar.gz
 sudo chown -R 1000:1000 data/
 sudo chown -R 999:999 postgres/
 
-# Restart n8n
+# Export environment variables and restart n8n
+export $(cat /home/damian/docker/.env | grep -v '^#' | xargs)
 docker-compose up -d
 ```
 
@@ -568,6 +589,7 @@ docker-compose logs n8n-postgres
 **Solution 1**: Permission issues
 ```bash
 sudo chown -R 999:999 postgres/
+export $(cat /home/damian/docker/.env | grep -v '^#' | xargs)
 docker-compose up -d
 ```
 
@@ -575,6 +597,7 @@ docker-compose up -d
 ```bash
 docker-compose down
 sudo rm -rf postgres/
+export $(cat /home/damian/docker/.env | grep -v '^#' | xargs)
 docker-compose up -d
 ```
 
