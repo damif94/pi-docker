@@ -10,20 +10,21 @@
 
 # (optional) also keep a root README / gitignore itself
 !.gitignore
+!.gitattributes
 !README.md
+!PROMPT.md
 
-# --- Docker runtime data (never commit) ---
-**/data/
-**/mysql/
-**/letsencrypt/
-**/postgres/
-**/redis/
-**/cache/
-**/logs/
-**/acme/
-**/certs/
+# Keep the root .env file (will be encrypted by git-crypt)
+!/.env
 
-# --- Docker runtime data (do not commit) ---
-portainer/data/
-nginx/mysql/
-nginx/letsencrypt/
+# Keep the .env.example template (plaintext, not encrypted)
+!.env.example
+
+# But ignore local .env overrides (not encrypted)
+.env.local
+
+# Keep documentation in .ralph/agent/
+!.ralph/
+!.ralph/agent/
+!.ralph/agent/*.md
+

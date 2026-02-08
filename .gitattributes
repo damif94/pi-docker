@@ -1,0 +1,16 @@
+# git-crypt encryption rules
+# Files matching these patterns will be encrypted when committed
+
+# Encrypt the root .env file (production secrets)
+/.env filter=git-crypt diff=git-crypt
+
+# Encrypt any files with 'secret' or 'private' in the name
+*secret* filter=git-crypt diff=git-crypt
+*private* filter=git-crypt diff=git-crypt
+
+# Encrypt key files if stored in repo
+*.key filter=git-crypt diff=git-crypt
+*-key.bin filter=git-crypt diff=git-crypt
+
+# Note: .env.example should remain plaintext (not listed here)
+
