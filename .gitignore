@@ -22,3 +22,8 @@
 **/logs/
 **/acme/
 **/certs/
+
+# --- Docker runtime data (do not commit) ---
+portainer/data/
+nginx/mysql/
+nginx/letsencrypt/
