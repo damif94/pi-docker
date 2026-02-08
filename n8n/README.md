@@ -382,7 +382,8 @@ docker-compose down
 # Create backup with today's date
 sudo tar -czf n8n-backup-$(date +%Y%m%d-%H%M%S).tar.gz data/ postgres/
 
-# Restart n8n
+# Export environment variables and restart n8n
+export $(cat /home/damian/docker/.env | grep -v '^#' | xargs)
 docker-compose up -d
 
 # Move backup to safe location
