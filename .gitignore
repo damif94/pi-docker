@@ -66,6 +66,10 @@ tdarr/server/
 **/config/cache/
 **/config/logs/
 
+
+.ralph/
+PROMPT.md
+
 # ------------------------------
 # Git-crypt
 # ------------------------------
