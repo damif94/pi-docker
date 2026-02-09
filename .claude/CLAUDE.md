@@ -43,8 +43,21 @@ This is a Docker-based home server setup running multiple services:
 ### Service Organization
 - Each service has its own directory with a `docker-compose.yml` file
 - Services are started independently: `cd <service> && docker compose up -d`
-- Data persistence: Each service uses local `./data` volumes
-- Database services: Local `./mysql`, `./postgres` volumes
+
+### Storage Configuration
+- **Toshiba Drive**: External storage mounted at `/srv/toshiba` for data-intensive services
+- **Path Pattern**: `/srv/toshiba/data/<service-name>` for service data
+  - Example: n8n uses `/srv/toshiba/data/n8n:/home/node/.n8n`
+  - Example: sonarr uses `/srv/toshiba/data:/data`
+- **Database Volumes**: Follow same pattern with subdirectory
+  - Example: n8n-postgres uses `/srv/toshiba/data/n8n/postgres:/var/lib/postgresql/data`
+  - Example: emby uses `/srv/toshiba/data/media:/media`
+- **Local Volumes**: System services (nginx, portainer) use relative paths like `./data`, `./mysql`
+- **Permissions**: Toshiba directories must be owned by `1000:1000` to match container user
+  ```bash
+  sudo mkdir -p /srv/toshiba/data/<service-name>
+  sudo chown -R 1000:1000 /srv/toshiba/data/<service-name>
+  ```
 
 ### Environment Variables
 - `.env` file at project root (encrypted with git-crypt)
@@ -99,10 +112,10 @@ This is a Docker-based home server setup running multiple services:
    ```bash
    cat /home/damian/docker/.env
    ```
-
-6. **Start service**:
+   
+6. **Start service with loaded .env**:
    ```bash
-   docker compose up -d
+   docker compose up -d --env-file /home/damian/docker/.env 
    ```
 
 7. **Check logs**:
