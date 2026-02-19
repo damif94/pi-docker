@@ -1,0 +1,245 @@
+# SearXNG Configuration Example
+# Place this file in /srv/toshiba/data/searxng/settings.yml on your Raspberry Pi
+# This is a reference configuration - customize as needed
+
+use_default_settings: true
+
+general:
+  debug: false
+  instance_name: "SearXNG"
+  privacypolicy_url: false
+  donation_url: false
+  contact_url: false
+  enable_metrics: false
+
+brand:
+  new_issue_url: ""
+  docs_url: ""
+  public_instances: ""
+  wiki_url: ""
+
+search:
+  safe_search: 0  # 0=off, 1=moderate, 2=strict
+  autocomplete: "google"  # Options: google, duckduckgo, wikipedia, dbpedia, etc.
+  autocomplete_min: 4
+  default_lang: "en"
+  ban_time_on_fail: 5
+  max_ban_time_on_fail: 120
+  formats:
+    - html
+    - json
+
+server:
+  port: 8080
+  bind_address: "0.0.0.0"
+  secret_key: "${SEARXNG_SECRET_KEY}"
+  base_url: "${SEARXNG_BASE_URL}"
+  limiter: true
+  image_proxy: true
+  method: "POST"
+  default_http_headers:
+    X-Content-Type-Options: nosniff
+    X-Download-Options: noopen
+    X-Robots-Tag: noindex, nofollow
+    Referrer-Policy: no-referrer
+
+redis:
+  url: redis://searxng-redis:6379/0
+
+ui:
+  static_use_hash: true
+  default_locale: "en"
+  query_in_title: true
+  infinite_scroll: false
+  center_alignment: false
+  cache_url: https://web.archive.org/web/
+  default_theme: simple
+  theme_args:
+    simple_style: auto  # auto, light, dark
+  results_on_new_tab: false
+  advanced_search: false
+  search_on_category_select: true
+  hotkeys: default
+
+# Outgoing request configuration
+outgoing:
+  request_timeout: 3.0
+  max_request_timeout: 15.0
+  pool_connections: 100
+  pool_maxsize: 20
+  enable_http2: true
+  # Uncomment to use a proxy for outgoing requests
+  # proxies:
+  #   http: http://proxy:8080
+  #   https: http://proxy:8080
+
+# Engine configuration
+# Customize which search engines to enable/disable
+engines:
+  - name: google
+    engine: google
+    shortcut: g
+    disabled: false
+    weight: 1
+
+  - name: duckduckgo
+    engine: duckduckgo
+    shortcut: ddg
+    disabled: false
+    weight: 1
+
+  - name: bing
+    engine: bing
+    shortcut: bi
+    disabled: false
+    weight: 1
+
+  - name: brave
+    engine: brave
+    shortcut: br
+    disabled: false
+    time_range_support: true
+    categories: [general, web]
+    weight: 1
+
+  - name: wikipedia
+    engine: wikipedia
+    shortcut: wp
+    disabled: false
+    weight: 1
+
+  - name: github
+    engine: github
+    shortcut: gh
+    disabled: false
+    weight: 1
+
+  - name: stackoverflow
+    engine: stackoverflow
+    shortcut: so
+    disabled: false
+    weight: 1
+
+  - name: reddit
+    engine: reddit
+    shortcut: re
+    disabled: false
+    weight: 1
+
+  - name: qwant
+    engine: qwant
+    shortcut: qw
+    categories: [general, web]
+    disabled: false
+    weight: 1
+
+  - name: startpage
+    engine: startpage
+    shortcut: sp
+    disabled: false
+    weight: 1
+
+  - name: youtube
+    engine: youtube_noapi
+    shortcut: yt
+    disabled: false
+    weight: 1
+
+  - name: openstreetmap
+    engine: openstreetmap
+    shortcut: osm
+    disabled: false
+
+  - name: wikidata
+    engine: wikidata
+    shortcut: wd
+    disabled: false
+    weight: 1
+
+  - name: currency
+    engine: currency_convert
+    categories: []
+    shortcut: cc
+    disabled: false
+
+  - name: wolframalpha
+    engine: wolframalpha_noapi
+    shortcut: wa
+    disabled: false
+    weight: 1
+
+  - name: arxiv
+    engine: arxiv
+    shortcut: arx
+    categories: [science]
+    disabled: false
+
+  - name: docker hub
+    engine: docker_hub
+    shortcut: dh
+    categories: [it]
+    disabled: false
+
+  - name: pypi
+    engine: xpath
+    shortcut: pypi
+    categories: [it, packages]
+    disabled: false
+    search_url: https://pypi.org/search/?q={query}
+    results_xpath: //div[contains(@class,"package-snippet")]
+    url_xpath: ./h3/a/@href
+    title_xpath: ./h3/a
+    content_xpath: ./p
+    first_page_num: 1
+
+  - name: npm
+    engine: json_engine
+    shortcut: npm
+    categories: [it, packages]
+    disabled: false
+    search_url: https://api.npms.io/v2/search?q={query}&size=20
+    results_query: results
+    url_query: package/links/npm
+    title_query: package/name
+    content_query: package/description
+
+# Categories configuration
+categories_as_tabs:
+  general:
+  images:
+  videos:
+  news:
+  map:
+  music:
+  it:
+  science:
+  files:
+  social media:
+
+# Enabled plugins
+enabled_plugins:
+  - 'Hash plugin'
+  - 'Self Information'
+  - 'Tracker URL remover'
+  - 'Ahmia blacklist'
+  - 'Hostname replace'
+
+# Hostname replace plugin configuration
+# Remove tracking parameters from result URLs
+hostname_replace:
+  '(.*\.)?youtube\.com$': 'piped.kavin.rocks'
+  '(.*\.)?youtu\.be$': 'piped.kavin.rocks'
+  # Uncomment to redirect other services
+  # '(.*\.)?reddit\.com$': 'teddit.net'
+  # '(.*\.)?twitter\.com$': 'nitter.net'
+
+# DOI resolver configuration
+doi_resolvers:
+  oadoi.org: 'https://oadoi.org/'
+  doi.org: 'https://doi.org/'
+  doai.io: 'https://dissem.in/'
+  sci-hub.se: 'https://sci-hub.se/'
+  sci-hub.st: 'https://sci-hub.st/'
+  sci-hub.ru: 'https://sci-hub.ru/'
+
+default_doi_resolver: 'oadoi.org'

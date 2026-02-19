@@ -1,0 +1,49 @@
+services:
+  searxng:
+    image: searxng/searxng:latest
+    container_name: searxng
+    restart: unless-stopped
+    user: "1000:1000"
+    ports:
+      - "8080:8080"
+    environment:
+      - SEARXNG_BASE_URL=${SEARXNG_BASE_URL:-http://localhost:8080}
+      - SEARXNG_SECRET_KEY=${SEARXNG_SECRET_KEY}
+      - BIND_ADDRESS=0.0.0.0:8080
+    volumes:
+      - /srv/toshiba/data/searxng:/etc/searxng
+    depends_on:
+      - searxng-redis
+    networks:
+      - searxng_network
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETGID
+      - SETUID
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+        max-file: "1"
+
+  searxng-redis:
+    image: redis:7-alpine
+    container_name: searxng-redis
+    restart: unless-stopped
+    command: redis-server --save 30 1 --loglevel warning
+    volumes:
+      - /srv/toshiba/data/searxng/redis:/data
+    networks:
+      - searxng_network
+    cap_drop:
+      - ALL
+    cap_add:
+      - SETGID
+      - SETUID
+      - DAC_OVERRIDE
+
+networks:
+  searxng_network:
+    driver: bridge
