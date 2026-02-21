@@ -115,7 +115,7 @@ This is a Docker-based home server setup running multiple services:
    
 6. **Start service with loaded .env**:
    ```bash
-   docker compose up -d --env-file /home/damian/docker/.env 
+   docker compose --env-file /home/damian/docker/.env up -d
    ```
 
 7. **Check logs**:
