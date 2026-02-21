@@ -25,7 +25,7 @@ services:
       - N8N_PROXY_HOPS=1
     volumes:
       - /srv/toshiba/data/n8n:/home/node/.n8n
-      - /srv/toshiba/data/media:/data/media
+      - /srv/toshiba/data/media:/home/node/.n8n-files/media
     depends_on:
       n8n-postgres:
         condition: service_healthy
