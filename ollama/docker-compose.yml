@@ -1,0 +1,35 @@
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    volumes:
+      - /srv/toshiba/data/ollama:/root/.ollama
+    networks:
+      - ollama_network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:11434/api/tags || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+
+  ollama-pull:
+    image: ollama/ollama:latest
+    container_name: ollama-pull
+    restart: "no"
+    depends_on:
+      ollama:
+        condition: service_healthy
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
+    entrypoint: ["ollama", "pull", "qwen2.5:1.5b"]
+    volumes:
+      - /srv/toshiba/data/ollama:/root/.ollama
+    networks:
+      - ollama_network
+
+networks:
+  ollama_network:
+    external: true
